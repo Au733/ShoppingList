@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using ShoppingList.Models;
 
 namespace ShoppingList.Views;
 
@@ -14,10 +16,31 @@ public partial class LoginPage : ContentPage
         Title = "Login";
     }
 
-    private void Login_OnClicked(object sender, EventArgs e)
+    async void Login_OnClicked(object sender, EventArgs e)
     {
-        App.SessionKey = "aaa";//If user's username and password are good the sever will assign the user a sessionkey to allow user to use the page.
-        Navigation.PopModalAsync();//pop away the modal page if user was able to login
+        //User info
+        //username:joew2
+        //password:aaa
+        
+        var data = JsonConvert.SerializeObject(new UserAccount(txtUser.Text, txtPassword.Text));
+        
+        var client = new HttpClient();
+        var response = await client.PostAsync(new Uri("https://joewetzel.com/fvtc/account/login"),
+            new StringContent(data, Encoding.UTF8, "application/json"));
+
+        var SKey = response.Content.ReadAsStringAsync().Result;
+
+        if (!string.IsNullOrEmpty(SKey) || SKey.Length < 50)
+        {
+            App.SessionKey = SKey;//If user's username and password are good the sever will assign the user a sessionkey to allow user to use the page.
+            Navigation.PopModalAsync();//pop away the modal page
+        }
+        else
+        {
+            await DisplayAlert("Error", "Sorry invalid username or password!", "OK");
+            return;
+        }
+        
     }
 
     private void CreateAccount_OnClicked(object sender, EventArgs e)
