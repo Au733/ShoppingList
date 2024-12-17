@@ -110,7 +110,7 @@ public partial class MainPage : ContentPage
 
     async void ClearList_OnClicked(object sender, EventArgs e)
     {
-        var dataID = ((MenuItem)sender).CommandParameter.ToString();
+        
         var data = JsonConvert.SerializeObject(new UserData(null, null ,App.SessionKey));
         
         var client = new HttpClient();
