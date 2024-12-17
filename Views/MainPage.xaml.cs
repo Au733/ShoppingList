@@ -107,4 +107,23 @@ public partial class MainPage : ContentPage
         
         LoadData();
     }
+
+    async void ClearList_OnClicked(object sender, EventArgs e)
+    {
+        var dataID = ((MenuItem)sender).CommandParameter.ToString();
+        var data = JsonConvert.SerializeObject(new UserData(null, null ,App.SessionKey));
+        
+        var client = new HttpClient();
+        
+        var request = new HttpRequestMessage
+        {
+            Method = HttpMethod.Delete,
+            RequestUri = new Uri("https://joewetzel.com/fvtc/account/data"),
+            Content = new StringContent(data, Encoding.UTF8, "application/json")
+        };
+
+        await client.SendAsync(request);
+        
+        LoadData();
+    }
 }
